@@ -1,0 +1,54 @@
+volumes:
+  pg_data:
+
+services:
+  db:
+    image: postgres:13.10
+    env_file: .env
+    ports:
+      - 5432:5432
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7.0
+    env_file: .env
+    ports:
+      - 6379:6379
+    volumes:
+      - ./redisdata:/data
+
+  zookeeper:
+    image: wurstmeister/zookeeper:latest
+    ports:
+      - 2181:2181
+    env_file: .env
+
+  kafka:
+    image: wurstmeister/kafka:latest
+    ports:
+      - 9092:9092
+    env_file: .env
+    depends_on:
+      - zookeeper
+
+  fastapi_service:
+    build: ./fastapi_service/
+    env_file: .env
+    ports:
+      - 9000:8000
+    depends_on:
+      - db
+      - redis
+      - kafka
+
+  django_service:
+    build: ./django_service/
+    env_file: .env
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+      - redis
+      - fastapi_service
+      - kafka
