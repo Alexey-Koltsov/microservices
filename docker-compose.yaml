@@ -1,6 +1,3 @@
-volumes:
-  pg_data:
-
 services:
   db:
     image: postgres:13.10
@@ -41,6 +38,11 @@ services:
       - db
       - redis
       - kafka
+#    develop:
+#      watch:
+#        - action: sync+restart
+#          path: ./fastapi_service
+#          target: /app/
 
   django_service:
     build: ./django_service/
@@ -52,3 +54,9 @@ services:
       - redis
       - fastapi_service
       - kafka
+
+volumes:
+  pg_data:
+
+networks:
+  microservices_network:

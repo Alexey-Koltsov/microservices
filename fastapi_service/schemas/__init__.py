@@ -1,1 +1,1 @@
-from .items import Item
+from .product_schemas import ProductCreateSchema, ProductSchema
