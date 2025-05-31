@@ -13,7 +13,6 @@ class ProductInterface(ABC):
     @staticmethod
     @abstractmethod
     async def get_products(
-        self,
         db: AsyncSession
     ) -> List[Product]:
         """Метод для получения продуктов"""
@@ -22,7 +21,6 @@ class ProductInterface(ABC):
     @staticmethod
     @abstractmethod
     async def create_product(
-        self,
         create_data: ProductCreateSchema,
         db: AsyncSession
     ) -> Product:

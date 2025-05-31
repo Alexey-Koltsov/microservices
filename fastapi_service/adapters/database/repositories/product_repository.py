@@ -14,8 +14,7 @@ class ProductRepository(ProductInterface):
 
     @staticmethod
     async def get_products(
-            self,
-            db: AsyncSession = Depends(get_db_session)
+        db: AsyncSession = Depends(get_db_session)
     ) -> List[Product]:
         stmt = select(Product)
         results = await db.execute(stmt)
@@ -24,7 +23,6 @@ class ProductRepository(ProductInterface):
 
     @staticmethod
     async def create_product(
-            self,
             create_data: ProductCreateSchema,
             db: AsyncSession = Depends(get_db_session)
     ) -> Product:

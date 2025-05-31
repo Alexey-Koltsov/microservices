@@ -38,11 +38,11 @@ services:
       - db
       - redis
       - kafka
-#    develop:
-#      watch:
-#        - action: sync+restart
-#          path: ./fastapi_service
-#          target: /app/
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./fastapi_service
+          target: /app/
 
   django_service:
     build: ./django_service/
