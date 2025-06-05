@@ -1,2 +1,0 @@
-from .depends_repositories import get_product_repository
-from .depends_services import get_product_service

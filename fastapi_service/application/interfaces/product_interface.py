@@ -1,28 +1,22 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from adapters.database.tables import Product
-from schemas.product_schemas import ProductCreateSchema
+from application.dataclass.product import ProductDTO
+from routing.schemas.product_schemas import ProductCreateSchema
 
 
 class ProductInterface(ABC):
     """Интерфейс для продукта"""
 
-    @staticmethod
     @abstractmethod
-    async def get_products(
-        db: AsyncSession
-    ) -> List[Product]:
+    async def get_products(self) -> List[ProductDTO]:
         """Метод для получения продуктов"""
         pass
 
-    @staticmethod
     @abstractmethod
     async def create_product(
+        self,
         create_data: ProductCreateSchema,
-        db: AsyncSession
-    ) -> Product:
+    ) -> ProductDTO:
         """Метод для создания продукта"""
         pass

@@ -6,6 +6,8 @@ services:
       - 5432:5432
     volumes:
       - pg_data:/var/lib/postgresql/data
+    networks:
+      - microservices_network
 
   redis:
     image: redis:7.0
@@ -14,12 +16,16 @@ services:
       - 6379:6379
     volumes:
       - ./redisdata:/data
+    networks:
+      - microservices_network
 
   zookeeper:
     image: wurstmeister/zookeeper:latest
     ports:
       - 2181:2181
     env_file: .env
+    networks:
+      - microservices_network
 
   kafka:
     image: wurstmeister/kafka:latest
@@ -28,16 +34,19 @@ services:
     env_file: .env
     depends_on:
       - zookeeper
+    networks:
+      - microservices_network
 
   fastapi_service:
     build: ./fastapi_service/
-    env_file: .env
     ports:
       - 9000:8000
     depends_on:
       - db
       - redis
       - kafka
+    networks:
+      - microservices_network
     develop:
       watch:
         - action: sync+restart
@@ -54,6 +63,8 @@ services:
       - redis
       - fastapi_service
       - kafka
+    networks:
+      - microservices_network
 
 volumes:
   pg_data:

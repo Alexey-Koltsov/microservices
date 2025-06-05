@@ -1,12 +1,9 @@
-from typing import List, Optional
+from typing import List
 
 from fastapi import APIRouter, Depends
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from database.database import get_db_session
-from schemas.product_schemas import ProductSchema, ProductCreateSchema
-from application.services import ProductService
-from depends import get_product_service
+from routing.schemas.product_schemas import ProductSchema, ProductCreateSchema
+from application.services.product_service import ProductService
+from adapters.routs.settings import create_product_service
 
 router = APIRouter(prefix="/products", tags=["products"])
 
@@ -14,14 +11,13 @@ router = APIRouter(prefix="/products", tags=["products"])
 @router.get(
     "/",
     responses={400: {"description": "Bad request"}},
-    response_model=Optional[List[ProductSchema]],
+    response_model=List[ProductSchema],
     description="Получение листинга всех продуктов",
 )
 async def get_all_products(
-    db: AsyncSession = Depends(get_db_session),
-    product_service: ProductService = Depends(get_product_service),
+    product_service: ProductService = Depends(create_product_service),
 ):
-    products = await product_service.get_products_service(db=db)
+    products = await product_service.get_products()
     return products
 
 
@@ -33,12 +29,10 @@ async def get_all_products(
 )
 async def post_create_product(
     create_data: ProductCreateSchema,
-    db: AsyncSession = Depends(get_db_session),
-    product_service: ProductService = Depends(get_product_service),
+    product_service: ProductService = Depends(create_product_service),
 ):
     product = await product_service.create_product_service(
-        create_data=create_data,
-        db=db
+        create_data=create_data
     )
 
     return product

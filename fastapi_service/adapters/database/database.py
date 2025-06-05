@@ -1,3 +1,4 @@
+import os
 from typing import AsyncGenerator
 
 from sqlalchemy.ext.asyncio import (
@@ -6,7 +7,7 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
-POSTGRES_URL = "postgresql+asyncpg://admin:password@localhost:5432/db"
+POSTGRES_URL = "postgresql+asyncpg://admin:password@db:5432/db"
 
 async_engine = create_async_engine(url=POSTGRES_URL, echo=True)
 
@@ -20,9 +21,9 @@ async_session = async_sessionmaker(
 async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
     async with async_session() as session:
         yield session
-        await session.close()
+        await session.commit()
 
 
-# session - создание сессии для работы с БД
+"""# session - создание сессии для работы с БД - убрать
 async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
-    return get_async_session()
+    return get_async_session()"""

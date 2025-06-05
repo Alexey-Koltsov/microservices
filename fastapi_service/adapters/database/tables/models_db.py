@@ -1,24 +1,43 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
-from sqlalchemy.orm import declarative_base, relationship
-
-Base = declarative_base()
+from sqlalchemy import Column, Integer, String, Table, ForeignKey
+from sqlalchemy.orm import registry, relationship
 
 
-class Category(Base):
-    __tablename__ = "category"
+mapper_registry = registry()
 
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(50), nullable=False)
+category_table = Table(
+    "category",
+    mapper_registry.metadata,
+    Column("id", Integer, primary_key=True),
+    Column("name", String(50)),
+)
 
-    products = relationship("Product", back_populates="category")
+
+class Category:
+    pass
 
 
-class Product(Base):
-    __tablename__ = "product"
+mapper_registry.map_imperatively(Category, category_table)
 
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(150), nullable=False)
-    category_id = Column(Integer, ForeignKey('category.id'), nullable=False)
-    quantity = Column(Integer, nullable=False)
 
-    category = relationship("Category", back_populates="products")
+product_table = Table(
+    "product",
+    mapper_registry.metadata,
+    Column("id", Integer, primary_key=True),
+    Column("name", String(150)),
+    Column("quantity", Integer),
+    Column("category_id", Integer, ForeignKey("category.id")),
+)
+
+
+class Product:
+    pass
+
+
+mapper_registry.map_imperatively(
+    Product,
+    product_table,
+    properties={
+        "category_table": relationship(Category, backref="product",
+                                       order_by=category_table.c.id)
+    },
+)
