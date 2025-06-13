@@ -1,5 +1,6 @@
 import os
 from typing import AsyncGenerator
+from dotenv import load_dotenv
 
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
@@ -7,7 +8,19 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
-POSTGRES_URL = "postgresql+asyncpg://admin:password@db:5432/db"
+load_dotenv()
+
+
+# POSTGRES_URL = "postgresql+asyncpg://admin:password@db:5432/db"
+
+POSTGRES_URL = (
+    "postgresql+asyncpg://"
+    f"{os.getenv('POSTGRES_USER')}:"
+    f"{os.getenv('POSTGRES_PASSWORD')}@"
+    f"{os.getenv('POSTGRES_HOST')}:"
+    f"{os.getenv('POSTGRES_PORT')}/"
+    f"{os.getenv('POSTGRES_DB')}"
+)
 
 async_engine = create_async_engine(url=POSTGRES_URL, echo=True)
 

@@ -39,6 +39,7 @@ services:
 
   fastapi_service:
     build: ./fastapi_service/
+    env_file: .env
     ports:
       - 9000:8000
     depends_on:
@@ -53,21 +54,30 @@ services:
           path: ./fastapi_service
           target: /app/
 
+
   django_service:
     build: ./django_service/
     env_file: .env
     ports:
       - 8000:8000
+    volumes:
+      - static:/backend_static
     depends_on:
       - db
       - redis
-      - fastapi_service
       - kafka
+      - fastapi_service
     networks:
       - microservices_network
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./django_service
+          target: /app/
 
 volumes:
   pg_data:
+  static:
 
 networks:
   microservices_network:

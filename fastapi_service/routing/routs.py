@@ -21,6 +21,20 @@ async def get_all_products(
     return products
 
 
+@router.get(
+    "/{product_id}",
+    responses={400: {"description": "Bad request"}},
+    response_model=ProductSchema,
+    description="Получение продукта по id",
+)
+async def get_product(
+    product_id: int,
+    product_service: ProductService = Depends(create_product_service),
+):
+    product = await product_service.get_product(product_id=product_id)
+    return product
+
+
 @router.post(
     "/",
     responses={400: {"description": "Bad request"}},

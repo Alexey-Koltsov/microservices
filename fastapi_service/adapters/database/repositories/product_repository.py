@@ -17,11 +17,22 @@ class ProductRepository(ProductInterface):
     async def get_products(self) -> List[ProductDTO]:
         stmt = select(Product)
         results = await self.session.execute(stmt)
-        products = [ProductDTO(id=result.id, name=result.name,
+        products = [ProductDTO(id=result.id,
+                               name=result.name,
                                category_id=result.category_id,
                                quantity=result.quantity)
                     for result in results.scalars().all()]
         return products
+
+    async def get_product(self, product_id: int) -> ProductDTO | None:
+        smt = await self.session.execute(
+            select(Product).where(Product.id == product_id))
+        result = smt.scalars().one_or_none()
+        return ProductDTO(
+            id=result.id,
+            name=result.name,
+            category_id=result.category_id,
+            quantity=result.quantity) if result else None
 
     async def create_product(
             self,
@@ -30,7 +41,7 @@ class ProductRepository(ProductInterface):
         create_data_dict = create_data.dict()
         stmt = insert(Product).values(**create_data_dict).returning(Product)
         results = await self.session.execute(stmt)
-        result = results.scalars().one()
+        result = results.scalars().one_or_none()
         product = ProductDTO(id=result.id,
                              name=result.name,
                              category_id=result.category_id,

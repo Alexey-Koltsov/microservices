@@ -15,6 +15,12 @@ class ProductService:
         result = await self.product_repository.get_products()
         return result
 
+    async def get_product(self, product_id: int) -> ProductDTO:
+        result = await self.product_repository.get_product(
+            product_id=product_id
+        )
+        return result
+
     async def create_product_service(
         self,
         create_data: ProductCreateSchema,
