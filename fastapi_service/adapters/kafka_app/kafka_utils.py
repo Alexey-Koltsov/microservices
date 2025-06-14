@@ -1,33 +1,38 @@
+import asyncio
 from aiokafka import AIOKafkaConsumer
 from aiokafka.errors import KafkaError
-import asyncio
 import json
-import redis
 from attr import asdict
 
 from adapters.database.database import get_async_session
 from adapters.database.repositories.product_repository import ProductRepository
+from adapters.redis_app.redis_utils import RedisClientAdapter
+from application.logging.logger import get_logger
+
+logger = get_logger()
 
 
-# Подключение к Redis
-client = redis.StrictRedis(host='redis', port=6379, db=0)
+class KafkaConsumerAdapter:
+    def __init__(self, topic, bootstrap_servers, auto_offset_reset,
+                 enable_auto_commit, group_id):
+        self.consumer = AIOKafkaConsumer(
+            topic,
+            bootstrap_servers=bootstrap_servers,
+            auto_offset_reset=auto_offset_reset,
+            enable_auto_commit=enable_auto_commit,
+            group_id=group_id,
+            value_deserializer=lambda m: json.loads(m.decode('utf-8')),
+        )
 
+    async def start(self):
+        await self.consumer.start()
 
-async def consume():
-    # Настройка консюмера
-    consumer = AIOKafkaConsumer(
-        'my-topic',
-        bootstrap_servers='kafka:9092',
-        auto_offset_reset='earliest',
-        enable_auto_commit=True,
-        group_id='my-group',
-        value_deserializer=lambda x: json.loads(x.decode('utf-8'))
-    )
-    await asyncio.sleep(30)
-    await consumer.start()
-    try:
-        while True:
-            async for message in consumer:
+    async def stop(self):
+        await self.consumer.stop()
+
+    async def get_messages(self, client: RedisClientAdapter):
+        try:
+            async for message in self.consumer:
                 if not message:
                     continue
                 else:
@@ -36,13 +41,18 @@ async def consume():
                         product_repository = ProductRepository(session=session)
                         result = await product_repository.get_product(
                             product_id=product_id)
+                        logger.info(f'Получен продукт: {result}')
                         if not result:
-                            # TODO: сделать обработку исключения, если товар не найден
-                            print('Product not found')
-                        # Запись данных
-                        client.set(product_id, json.dumps(asdict(result),
-                                                          ensure_ascii=False))
-    except KafkaError as e:
-        print(e)
-    finally:
-        await consumer.stop()
+                            # result = {'error': 'Product not found'}
+                            logger.info('Отправляем в Redis продукт: '
+                                        '{}')
+                            client.store_message(product_id, dict({}))
+                        # Запись данных в Redis
+                        else:
+                            logger.info('Отправляем в Redis продукт: '
+                                        f'{result}')
+                            client.store_message(product_id,
+                                                 asdict(result))
+                # await asyncio.sleep(1)
+        except KafkaError as e:
+            logger.error(f'Произошла ошибка обработки Kafka: {e}')

@@ -9,3 +9,5 @@ class ProductCreateSchema(BaseModel):
 
 class ProductSchema(ProductCreateSchema):
     id: int
+
+

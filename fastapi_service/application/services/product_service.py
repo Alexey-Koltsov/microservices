@@ -15,7 +15,7 @@ class ProductService:
         result = await self.product_repository.get_products()
         return result
 
-    async def get_product(self, product_id: int) -> ProductDTO:
+    async def get_product(self, product_id: int) -> ProductDTO | None:
         result = await self.product_repository.get_product(
             product_id=product_id
         )
