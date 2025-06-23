@@ -1,5 +1,5 @@
 import asyncio
-from adapters.kafka_app.kafka_utils import KafkaConsumerAdapter
+from adapters.kafka_app.kafka_consumer import KafkaConsumerAdapter
 from adapters.redis_app.redis_utils import RedisClientAdapter
 
 client = RedisClientAdapter(host='redis', port=6379, db=0)

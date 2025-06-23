@@ -1,4 +1,4 @@
-FROM python:3.11
+FROM python:3.11-slim-bullseye
 
 WORKDIR /app
 
@@ -10,4 +10,9 @@ RUN pip install -r requirements.txt --no-cache-dir
 
 COPY . .
 
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "django_service.wsgi"]
+# Скопируйте entrypoint.sh и сделайте его исполняемым
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
+# Укажите entrypoint
+ENTRYPOINT ["/app/entrypoint.sh"]

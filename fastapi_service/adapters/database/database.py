@@ -11,8 +11,6 @@ from sqlalchemy.ext.asyncio import (
 load_dotenv()
 
 
-# POSTGRES_URL = "postgresql+asyncpg://admin:password@db:5432/db"
-
 POSTGRES_URL = (
     "postgresql+asyncpg://"
     f"{os.getenv('POSTGRES_USER')}:"
@@ -35,8 +33,3 @@ async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
     async with async_session() as session:
         yield session
         await session.commit()
-
-
-"""# session - создание сессии для работы с БД - убрать
-async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
-    return get_async_session()"""

@@ -7,7 +7,7 @@ from drf_yasg.utils import swagger_auto_schema
 import json
 import redis
 
-from kafka_app.kafka_utils import producer
+from kafka_app.kafka_producer import producer
 
 
 logger = logging.getLogger(__name__)
@@ -33,8 +33,10 @@ def get_product(request, product_id):
             value = client.get(product_id)
             logger.info(f'Повторно по ключу {product_id} получили значение'
                         f' {value}')
-        if isinstance(value, bytes):
+        if value and isinstance(value, bytes):
             value = value.decode('utf-8')
+        else:
+            return JsonResponse({'detail': 'Product not found'}, status=404)
         json_data = json.loads(value)
         if not json_data:
             return JsonResponse({'detail': 'Product not found'}, status=404)

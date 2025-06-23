@@ -1,1 +1,1 @@
-from .kafka_utils import producer
+from .kafka_producer import producer
