@@ -1,26 +1,27 @@
+import os
 import logging
 import time
 
 from django.http import Http404, JsonResponse
-from rest_framework.decorators import api_view
+from dotenv import load_dotenv
 from drf_yasg.utils import swagger_auto_schema
 import json
 import redis
+from rest_framework.decorators import api_view
 
 from kafka_app.kafka_producer import producer
+from redis_app.redis_adapter import client
 
+load_dotenv()
 
 logger = logging.getLogger(__name__)
 
-# Подключение к Redis
-client = redis.StrictRedis(host='redis', port=6379, db=0)
 
-
-@swagger_auto_schema(method='get', responses={200: "ОК"})
+@swagger_auto_schema(method='get', responses={200: 'ОК'})
 @api_view(['GET'])
 def get_product(request, product_id):
-    if request.method == "GET":
-        # Получение значения по ключу
+    """Получить продукт по его id."""
+    if request.method == 'GET':
         value = client.get(product_id)
         logger.info(f'По ключу {product_id} получили значение {value}')
         if not value:

@@ -1,24 +1,17 @@
-import asyncio
-from adapters.kafka_app.kafka_consumer import KafkaConsumerAdapter
-from adapters.redis_app.redis_utils import RedisClientAdapter
+import os
 
-client = RedisClientAdapter(host='redis', port=6379, db=0)
+from adapters.kafka_app.kafka_consumer import consumer
+from adapters.redis_app.redis_utils import client
+from dotenv import load_dotenv
 
-# Подключение к Redis
+load_dotenv()
+
 client.connect()
 
 
-# Настройка консюмера
-consumer = KafkaConsumerAdapter(
-    'my-topic',
-    bootstrap_servers='kafka:9092',
-    auto_offset_reset='earliest',
-    enable_auto_commit=True,
-    group_id='my-group',
-)
-
-
 async def consume():
-    await asyncio.sleep(60)
+    """
+    Асинхронная функция для запуска потребителя Kafka и получения сообщений.
+    """
     await consumer.start()
     await consumer.get_messages(client=client)

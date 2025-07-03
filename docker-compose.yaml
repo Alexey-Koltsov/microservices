@@ -12,6 +12,7 @@ services:
   redis:
     image: redis:7-alpine
     env_file: .env
+    restart: always
     ports:
       - 6379:6379
     networks:
@@ -22,6 +23,7 @@ services:
     ports:
       - 2181:2181
     env_file: .env
+    restart: always
     networks:
       - microservices_network
 
@@ -30,6 +32,7 @@ services:
     ports:
       - 9092:9092
     env_file: .env
+    restart: always
     depends_on:
       - zookeeper
     networks:
@@ -57,6 +60,7 @@ services:
   django_service:
     build: ./django_service/
     env_file: .env
+    restart: always
     ports:
       - 8000:8000
     volumes:
