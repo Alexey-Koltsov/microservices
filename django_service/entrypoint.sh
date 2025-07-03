@@ -1,8 +1,7 @@
 #!/bin/sh
 
-python manage.py makemigrations
-python manage.py migrate
+poetry run python manage.py makemigrations
+poetry run python manage.py migrate
+poetry run python manage.py collectstatic --noinput
 
-python manage.py collectstatic --noinput
-
-exec gunicorn django_service.wsgi --bind 0.0.0.0:8000
+exec poetry run gunicorn django_service.wsgi --bind 0.0.0.0:8000
