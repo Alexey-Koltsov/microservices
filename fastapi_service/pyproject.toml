@@ -1,0 +1,96 @@
+[tool.poetry]
+name = "fastapi_service"
+version = "0.1.0"
+description = "Проект на fastapi"
+authors = ["Алексей Кольцов <koltsov2022@yandex.ru>"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = ">=3.12"
+aiokafka = "0.12.0"
+alembic = ">=1.16.1"
+annotated-types = "0.7.0"
+anyio = "4.9.0"
+async-timeout = "5.0.1"
+asyncpg = "0.30.0"
+attr = "0.3.2"
+attrs = "23.1.0"
+certifi = "2025.4.26"
+click = "8.1.8"
+colorama = "0.4.6"
+config = "0.5.1"
+dnspython = "2.7.0"
+email_validator = "2.2.0"
+fastapi = "0.115.12"
+fastapi-cli = "0.0.7"
+greenlet = "3.2.2"
+h11 = "0.16.0"
+httpcore = "1.0.9"
+httptools = "0.6.4"
+httpx = "0.28.1"
+idna = "3.10"
+iniconfig = "2.1.0"
+Jinja2 = "3.1.6"
+Mako = "1.3.10"
+markdown-it-py = "3.0.0"
+MarkupSafe = "3.0.2"
+mdurl = "0.1.2"
+packaging = "25.0"
+pluggy = "1.6.0"
+psycopg2-binary = "2.9.10"
+pydantic = "2.11.4"
+pydantic_core = "2.33.2"
+Pygments = "2.19.1"
+pytest = "8.4.1"
+pytest-asyncio = "1.0.0"
+python-dotenv = "1.1.0"
+python-multipart = "0.0.20"
+PyYAML = "6.0.2"
+redis = "6.2.0"
+rich = "14.0.0"
+rich-toolkit = "0.14.6"
+shellingham = "1.5.4"
+sniffio = "1.3.1"
+SQLAlchemy = "2.0.41"
+starlette = "0.46.2"
+typer = "0.15.4"
+typing-inspection = "0.4.0"
+typing_extensions = "4.13.2"
+uvicorn = "0.34.2"
+watchfiles = "1.0.5"
+websockets = "15.0.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+line-length = 79
+
+extend-exclude = [
+    "django_service/django_service/*.py",
+    "**/settings.py",
+    "**/migrations/*",
+    "**/django_service/api/urls.py/",
+    "**/pytest.ini",
+    "**/README.md",
+    "**apps.py",
+]
+
+force-exclude = true
+[tool.ruff.lint]
+preview = true
+select = [
+    "B",  # black
+    "E", # pycodestyle error
+    "W", # pycodestyle warning
+    "F", # pyflakes
+    "I", # isort
+    "N", # pep8-naming
+]
+fixable = ["F401", "D400", "F541"]
+ignore = ["E203", "I001", "N999", "E501", "F841"]
+
+[pytest.ini_options]
+pythonpath = ["."]
